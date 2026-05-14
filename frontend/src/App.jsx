@@ -2,17 +2,29 @@ import { useState, useEffect } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import TaskList from './components/TaskList'
 import TaskForm from './components/TaskForm'
+import translations from './translations'
 import './index.css'
 
 const API_URL = import.meta.env.VITE_API_URL
 
 function App() {
   const [tasks, setTasks] = useState([])
-  const navigate = useNavigate() // Hook para navegar entre rutas por código
+  const [darkMode, setDarkMode] = useState(false)
+  const [lang, setLang] = useState('es') // 'es' o 'en'
+  const navigate = useNavigate()
+
+  // t es el diccionario del idioma activo
+  const t = translations[lang]
+
+  useEffect(() => { fetchTasks() }, [])
 
   useEffect(() => {
-    fetchTasks()
-  }, [])
+    if (darkMode) {
+      document.body.classList.add('dark')
+    } else {
+      document.body.classList.remove('dark')
+    }
+  }, [darkMode])
 
   async function fetchTasks() {
     const res = await fetch(`${API_URL}/tasks`)
@@ -28,7 +40,7 @@ function App() {
     })
     const newTask = await res.json()
     setTasks([...tasks, newTask])
-    navigate('/') // Después de crear, vuelve a la lista
+    navigate('/')
   }
 
   async function updateTask(id, taskData) {
@@ -39,7 +51,7 @@ function App() {
     })
     const updated = await res.json()
     setTasks(tasks.map(t => t.id === updated.id ? updated : t))
-    navigate('/') // Después de editar, vuelve a la lista
+    navigate('/')
   }
 
   async function toggleTask(task) {
@@ -59,12 +71,28 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Lista de Tareas</h1>
+      {/* Controles fijos arriba a la derecha */}
+      <div style={{ position: 'fixed', top: '16px', right: '16px', display: 'flex', gap: '8px', alignItems: 'center', zIndex: 1000 }}>
+        {/* Toggle de idioma */}
+        <button
+          className="dark-toggle"
+          onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+        >
+          {lang === 'es' ? '🇺🇸 English' : '🇦🇷 Español'}
+        </button>
 
-      {/* Routes define qué componente mostrar según la URL */}
+        {/* Toggle de dark mode */}
+        <button
+          className="dark-toggle"
+          onClick={() => setDarkMode(!darkMode)}
+        >
+          {darkMode ? t.lightMode : t.darkMode}
+        </button>
+      </div>
+
+      <h1>{t.appTitle}</h1>
+
       <Routes>
-
-        {/* Ruta raíz: muestra la lista */}
         <Route
           path="/"
           element={
@@ -72,27 +100,18 @@ function App() {
               tasks={tasks}
               onDelete={deleteTask}
               onToggle={toggleTask}
+              t={t}
             />
           }
         />
-
-        {/* Ruta para crear tarea nueva */}
         <Route
           path="/new"
-          element={<TaskForm onSave={createTask} />}
+          element={<TaskForm onSave={createTask} t={t} />}
         />
-
-        {/* Ruta para editar: el :id es dinámico, ej: /edit/3 */}
         <Route
           path="/edit/:id"
-          element={
-            <TaskForm
-              onSave={updateTask}
-              tasks={tasks}
-            />
-          }
+          element={<TaskForm onSave={updateTask} tasks={tasks} t={t} />}
         />
-
       </Routes>
     </div>
   )

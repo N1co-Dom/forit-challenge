@@ -1,15 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 
-function TaskItem({ task, onDelete, onToggle }) {
+function TaskItem({ task, onDelete, onToggle, t }) {
   const navigate = useNavigate()
 
   function handleDelete() {
-    // window.confirm muestra un popup nativo del navegador
-    // devuelve true si el usuario confirmó, false si canceló
-    const confirmado = window.confirm(`¿Eliminás la tarea "${task.titulo}"?`)
-    if (confirmado) {
-      onDelete(task.id)
-    }
+    const confirmado = window.confirm(`${t.deleteConfirm} "${task.titulo}"?`)
+    if (confirmado) onDelete(task.id)
   }
 
   return (
@@ -20,13 +16,13 @@ function TaskItem({ task, onDelete, onToggle }) {
       </div>
       <div className="task-actions">
         <button className="btn-success" onClick={() => onToggle(task)}>
-          {task.completada ? 'Deshacer' : 'Completar'}
+          {task.completada ? t.undo : t.complete}
         </button>
         <button className="btn-primary" onClick={() => navigate(`/edit/${task.id}`)}>
-          Editar
+          {t.edit}
         </button>
         <button className="btn-danger" onClick={handleDelete}>
-          Eliminar
+          {t.delete}
         </button>
       </div>
     </div>
