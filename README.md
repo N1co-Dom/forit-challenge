@@ -1,3 +1,4 @@
+<img width="1919" height="885" alt="Screenshot_3" src="https://github.com/user-attachments/assets/86dcb2d0-251e-4524-9915-62368393b742" />
 # ForIT Challenge - Lista de Tareas
 
 Aplicación fullstack de gestión de tareas desarrollada como challenge de ingreso a la Academia ForIT.
@@ -69,3 +70,5 @@ App disponible en `http://localhost:5173`
 - Marcar tareas como completadas o pendientes
 - Editar tareas existentes
 - Eliminar tareas
+- 
+<img width="1919" height="885" alt="Screenshot_3" src="https://github.com/user-attachments/assets/0377a933-d1b1-4ec2-acb4-f86a9a69b509" />
